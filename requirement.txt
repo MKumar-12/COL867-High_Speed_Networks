@@ -1,0 +1,8 @@
+dpkt
+scapy
+pandas
+numpy
+seaborn
+jupyterlab
+python-whois
+matplotlib

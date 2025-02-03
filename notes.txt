@@ -1,0 +1,14 @@
+Creating Python environment:
+    python -m venv HSN
+
+Activating env:                             (initially at root dir.)
+    .\HSN\Scripts\activate
+
+Installing Jupiter Notebook in env:         (env must be activated)
+    pip install jupyterlab
+
+List installed pkg in env:
+    pip freeze
+    
+Installing dependencies from requirement.txt:
+    pip install -r .\requirement.txt
