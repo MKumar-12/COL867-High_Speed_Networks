@@ -3,4 +3,5 @@ HSN/
 *.csv
 *.csv.gz
 *.har
+*.log
 notes.txt
