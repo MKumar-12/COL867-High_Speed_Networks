@@ -2,3 +2,4 @@ selenium
 browsermob-proxy
 pyshark
 pandas
+haralyzer

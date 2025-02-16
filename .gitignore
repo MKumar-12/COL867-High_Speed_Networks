@@ -2,4 +2,5 @@ HSN/
 *.pcap
 *.csv
 *.csv.gz
+*.har
 notes.txt

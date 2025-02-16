@@ -6,3 +6,4 @@ seaborn
 jupyterlab
 python-whois
 matplotlib
+scikit-learn
