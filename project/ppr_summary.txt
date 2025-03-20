@@ -1,0 +1,236 @@
+1. Introduction
+    1.1. Definition of Available Bandwidth
+        Available bandwidth (A) is the remaining capacity of a network link after subtracting the rate of cross traffic (𝜆) from the total link capacity (𝐶).
+                𝐴 = 𝐶 − 𝜆
+
+        The tight link is the one with the least available bandwidth, whereas the bottleneck link is the one with the smallest capacity.
+
+    1.2. Challenges in Bandwidth Estimation
+        Traditional bandwidth estimation relies on active probing using artificial traffic and measuring dispersion.
+    
+        Fluid model assumption (FIFO multiplexing of packets) does not always hold in real networks due to:
+            Non-fluid cross traffic (bursty traffic patterns).
+            Multiple bottlenecks (complicating bandwidth estimation).
+            Packet clustering (interrupt coalescing distorts timestamps).
+            Timestamp inaccuracies (hardware measurement limitations).
+
+    1.3. Motivation for Machine Learning
+        Due to random distortions, traditional models struggle with accuracy.
+        Machine learning (ML) can learn patterns in packet dispersion and improve bandwidth estimation.
+
+    1.4. Key Contributions
+        Trains a shallow neural network to estimate bandwidth from packet dispersion vectors.
+        Evaluates ML performance under difficult conditions, including:
+            Multiple bottlenecks
+            Heavy cross-traffic burstiness
+
+        Shows better accuracy than state-of-the-art model-based methods and a previous ML-based approach (Yin et al., 2016).
+        Introduces an iterative ML-based method for adaptive probing.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. Model-Based Reference Implementations
+    2.1. Overview of Traditional Techniques
+        Bandwidth estimation methods are categorized into:
+
+            Iterative Probing (e.g., Pathload, IGI/PTR)
+                Sends repeated probes at increasing rates until self-induced congestion occurs.
+                Uses feedback to identify the turning point where the rate exceeds available bandwidth.
+                
+                Drawbacks:
+                    High probe traffic overhead.
+                    Underestimation bias in bursty networks.
+
+            Direct Probing (e.g., Spruce, TOPP, DietTOPP)
+                Uses predefined probe rates to estimate the rate response curve.
+                Relies on linear regression to compute available bandwidth.
+            
+                Drawbacks:
+                    Fails if the fluid model assumption is violated (e.g., non-fluid cross traffic).
+                    Can misinterpret multiple tight links.
+
+    2.2. Fluid Model and Rate Response Curve
+        Defines a mathematical relationship between input and output gaps:
+            𝑔 out = max(𝑔 in, 𝑔 in ⋅ (𝜆 + 𝑙)/ 𝐶)
+
+        The curve exhibits a clear turning point at 𝐶 − 𝜆, useful for estimating bandwidth.
+
+        However, random traffic variations cause deviations, leading to estimation errors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3. Neural Network-Based Method
+    3.1. Machine Learning Model
+        Uses a shallow neural network with:
+            20 input neurons (normalized probe rate ratios).
+            40 hidden neurons.
+            2 output neurons (bottleneck capacity 𝐶 and available bandwidth 𝐴).
+
+        Trained with data from controlled experiments.
+
+    3.2. Training Data and Setup
+        Conducted in a testbed with real network hardware (Leibniz University Hannover).
+        Used packet train probes with different rates.
+        
+        Two datasets:
+            Dataset (i): 
+                Single tight link, C = 100 Mbps, 
+                exponential cross traffic (25, 50, 75 Mbps).
+            
+            Dataset (ii): 
+                Single tight link, C = 50 Mbps, 
+                cross traffic (12.5, 25, 37.5 Mbps).
+
+    3.3. Testing and Evaluation
+        Evaluated using different cross traffic rates (both within and beyond training data).
+
+        Results:
+            Neural network outperformed traditional methods.
+            Minimal estimation bias for known traffic conditions.
+            Accurate interpolation and extrapolation of available bandwidth.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. Variation of Tight Link Capacity and Multiple Tight Links
+    4.1. Testing on Random Network Configurations
+        Generated test networks with random capacities (10 Mbps to 1 Gbps) and varying cross traffic.
+        
+        Findings:
+            The ML model adapted well to different capacities.
+            Performance declined slightly in high-capacity networks due to timestamp noise.
+
+    4.2. Multiple Tight Links
+        Standard methods underestimate bandwidth in multi-hop networks.
+        Retrained the ML model for multi-hop scenarios, improving accuracy.
+
+    4.3. Impact of Bottleneck Link Order
+        Two scenarios:
+            Tight link follows bottleneck link → Better estimation accuracy.
+            Tight link precedes bottleneck link → Higher estimation error.
+
+        ML model learned the patterns and reduced estimation bias.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Iterative Neural Network-Based Method
+    5.1. Motivation for Iterative Learning
+        Traditional iterative probing (e.g., Pathload) adjusts probe rates based on congestion detection.
+        Proposed ML-based method chooses probe rates adaptively.
+
+    5.2. Recommender Neural Network
+        Trains a second neural network to select the most informative probe rates.
+        Reduces unnecessary probes, making estimation more efficient.
+
+    5.3. Comparison with Other ML-Based Classifiers
+        Individual Classifier:
+            Uses single probe rate.
+            State-of-the-art method (e.g., Yin et al., 2016).
+            Requires iterative adjustments.
+
+        Full Classifier (Proposed ML Model):
+            Uses cumulative probe data.
+            More accurate and stable in bursty networks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+6. Conclusions
+    Key Findings:
+        ML-based estimation outperforms traditional methods.
+        The neural network is robust to different traffic conditions.
+        Iterative learning with adaptive probing further improves efficiency.
+    
+    Future Directions:
+        Exploring unsupervised learning.
+        Refining estimation for multi-hop networks.
