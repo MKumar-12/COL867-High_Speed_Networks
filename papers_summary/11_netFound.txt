@@ -1,0 +1,160 @@
+1. Introduction
+    Existing ML-based network security solutions struggle with generalizability due to reliance on supervised learning and labeled datasets.
+    netFound is proposed as a transformer-based foundation model that leverages self-supervised learning on unlabeled network telemetry data.
+    It addresses issues of noisy, sparse, and skewed labeled datasets by using 
+        multi-modal embeddings, 
+        protocol-aware tokenization, and 
+        hierarchical transformers.
+    Results show superior performance over state-of-the-art (SOTA) models and robustness to noisy labels and learning shortcuts.
+
+
+2. Background and Problem Scope
+    2.1 Machine Learning in Network Security
+        Traffic Classification & Application Fingerprinting: 
+            Identifies applications based on network traffic features.
+        Intrusion Detection & Anomaly Detection: 
+            Detects malicious traffic via supervised or unsupervised ML methods.
+        Other Tasks: 
+            Botnet detection, vulnerability assessment, etc.
+
+    2.2 Existing Techniques and Limitations
+        Task-Specific ML Models: 
+            Require large labeled datasets and often fail to generalize.
+        Task-Agnostic ML Models: 
+            Use unlabeled data to create network data representations but struggle to capture network-specific attributes.
+        Transformer-Based Network Models: 
+            Existing solutions (e.g., ET-BERT, YaTC) treat network data like text or images, ignoring its hierarchical, structured nature.
+
+
+3. Overview of netFound
+    Key Challenges in Network Data Processing:
+
+    Multi-modal Data: 
+        Includes packet fields, timestamps, context (direction), and statistics.
+        Structured Headers: Fixed packet header fields make traditional tokenization methods ineffective.
+        Hierarchical Nature: Packets form bursts, flows, sessions, etc., requiring a hierarchical model.
+        Variable-Length Sequences: Data has a heavy-tailed distribution with short and long sequences.
+
+    netFound's Solutions:
+        Protocol-Aware Tokenization: Preserves packet field structures.
+        Multi-Modal Embeddings: Integrates packet features with metadata.
+        Hierarchical Transformers: Captures relationships across different granularities.
+        Data-Driven Token Composition: Manages sequence lengths efficiently.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. netFound’s Workflow
+    4.1 Data Preprocessing
+        Splits PCAP files into flows, groups packets into bursts, and extracts packet fields.
+        Uses protocol-aware tokenization to preserve semantic integrity of packet headers.
+
+    4.2 Token Embedding
+        Converts raw data into embeddings using:
+            Packet Field Embeddings
+            Positional Embeddings
+            Metadata Embeddings
+
+    4.3 Pre-training netFound
+        Uses a hierarchical transformer with skip connections to learn multi-level dependencies.
+        Self-supervised training with a 30% token masking rate for pre-training.
+    
+    4.4 Fine-tuning netFound
+        A simple MLP model is trained on top of netFound for each task.
+        Fine-tuning updates only a subset of model parameters to improve efficiency.
+
+5. Evaluation of Pre-trained Model
+    5.1 Experimental Setup
+        Used campus network packet traces for pre-training (1.8M flows).
+        Tested on a separate dataset collected 9 months later to evaluate robustness.
+
+    5.2 Masked Token Prediction
+        The model predicts missing tokens with 85%+ accuracy, even under concept drift.
+    
+    5.3 Ablation Study
+        Shows gradual performance improvement by adding:
+            Long sequences                  (L)
+            Protocol-aware tokenization     (T)
+            Multi-modal embeddings          (M)
+            Hierarchical transformers       (H)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6. Evaluation of Fine-tuned Models
+    6.1 Downstream Tasks
+        Traffic Classification (Campus dataset)
+        Application Fingerprinting (Crossmarkets, ISCXVPN)
+        Intrusion Detection (CIC-IDS-2017)
+        HTTP Bruteforce Detection (netUnicorn)
+
+    6.2 Performance Comparison
+        netFound outperforms ET-BERT, YaTC, nPrintML, and Curtains across all tasks.
+    
+    6.3 Resilience to Learning Shortcuts
+        Other models fail when learning shortcuts are removed, but netFound remains stable.
+
+    6.4 Robustness to Noisy Labels
+        netFound experiences only a 5% accuracy drop even when 40% of training data is mislabeled, while other models degrade significantly.
+
+    6.5 Ablation Study
+        Confirms hierarchical architecture and self-supervised learning improve generalizability.
+
+7. Discussion
+    Limitations:
+        More data diversity (e.g., data center, cellular networks) needs exploration.
+        Further comparison with more ML models is necessary.
+        Potential improvements in handling long sequences.
+
+Conclusion
+    netFound is the first transformer-based foundation model explicitly designed for network security.
+    It captures hierarchical relationships, handles noisy labels, and outperforms existing SOTA models.
+    The code is publicly available on GitHub and Hugging Face.

@@ -1,0 +1,36 @@
+Good afternoon sir!
+I hope u're doing well.
+
+Apologies for not updating you over the past three weeks. 
+I wasn't well during the first two weeks of Feb, 
+which hindered our progress. 
+Under pressure to present some results over the next week, 
+we explored workarounds and did literature survey
+to set up an initial ML-based classification for network traffic. 
+However, this took us some extra time.
+
+Meanwhile, Sajal kept suggesting that we reach out to you when 
+we were stuck, 
+but I felt embarrassed since we hadn’t made enough progress 
+to present. 
+Thankfully, last week, we finally managed to get started.
+
+Currently, we have taken the PCAPs of classified traffic classes 
+from the previously labeled institute dataset 
+and converted them into flows. 
+We then extracted time-series-related features such as 
+mean packet lengths, mean inter-arrival time (IAT), 
+standard deviation in these values, the flow sizes, 
+flow durations, etc.
+
+Using these features, we trained supervised ML models, 
+including Random Forest (RF), RF with Grid Search, and XGBoost, 
+achieving a maximum accuracy of 0.76 with RF. 
+However, when we previously used CNN and Transformer models 
+on the same dataset, we achieved over 90% accuracy. 
+This lower accuracy suggests that our current feature set is 
+insufficient for accurately classifying traffic classes.
+
+We are now working on identifying additional features to 
+enhance our dataset. 
+We aim to present updated results to you by next week.

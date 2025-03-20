@@ -1,0 +1,206 @@
+Abstract
+The paper introduces NetLLM, a framework that adapts large language models (LLMs) for networking tasks. 
+Traditional deep learning (DL) approaches require extensive manual design for different tasks and 
+often fail to generalize across diverse environments. 
+NetLLM provides a unified approach to handle various networking problems by leveraging pre-trained LLMs, 
+significantly reducing engineering overhead while improving performance. 
+It effectively processes multimodal data and efficiently generates task-specific outputs. 
+The framework is evaluated on three use cases—
+    viewport prediction, 
+    adaptive bitrate streaming, 
+    and cluster job scheduling
+        — demonstrating superior performance over state-of-the-art solutions.
+
+
+1. Introduction
+    1.1 Roadmap So Far
+        Traditional networking optimizations relied on rule-based approaches, which required extensive manual configuration.
+        Recent deep learning (DL) methods automate decision-making but demand high engineering effort (specialized DNNs for each task) 
+        and fail to generalize across different network conditions.
+
+    1.2 Opportunities & Challenges
+        Inspired by LLMs success in NLP, the authors propose adapting them for networking tasks.
+        Key advantages:
+            One model for all tasks, reducing the need for specialized DNNs.
+            Strong generalization, leveraging pre-trained knowledge.
+            However, challenges exist:
+                Modality gap: 
+                    LLMs are trained on text, while networking data includes time-series, graphs, and numerical values.
+                Answer generation inefficiency: 
+                    LLMs generate responses token-by-token, leading to latency and hallucinations.
+                High adaptation costs: 
+                    Fine-tuning large models for networking tasks can be computationally expensive.
+
+    1.3 Design and Contributions
+        Introduces NetLLM, which efficiently adapts LLMs for networking using:
+            Multimodal encoder to handle various networking data formats.
+            Networking head for structured output generation instead of token-by-token prediction.
+            Data-driven low-rank adaptation (DD-LRNA) to reduce fine-tuning costs.
+
+        Evaluated across three tasks:
+            Viewport prediction (VR streaming)
+            Adaptive bitrate streaming (ABR)
+            Cluster job scheduling (CJS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. Background
+    2.1 Learning-Based Networking Algorithms
+        DL models have been used for 
+            traffic classification, 
+            bandwidth prediction, 
+            congestion control, 
+            and job scheduling.
+        
+        Supervised Learning (SL) is used for prediction tasks, 
+        while Reinforcement Learning (RL) is used for decision-making tasks.
+        
+        Challenges: 
+            High engineering costs and poor generalization.
+
+    2.2 Large Language Models (LLMs)
+        LLMs (ChatGPT, Llama2, Falcon) excel in reasoning and problem-solving due to their large-scale pretraining.
+        They are based on Transformer architectures, which handle input sequences token-by-token.
+        Adapted successfully in robotics, bioinformatics, and finance, but not yet for networking.
+
+    2.3 Domain-Adapted LLMs
+        Existing adaptations (PaLM-E for robotics, ESMFold for protein prediction) prove that LLMs can generalize beyond NLP.
+        However, there has been no prior attempt to systematically apply LLMs to networking.
+
+3. Motivation
+    NetLLM is motivated by three key challenges in using LLMs for networking:
+
+    3.1 Large Modality Gap
+        Networking tasks use time-series data, graphs, and structured numerical inputs, which LLMs don’t natively support.
+        Existing approaches like prompt learning (converting numbers into text) perform poorly.
+
+    3.2 Inefficiency of Token-Based Answer Generation
+        LLMs generate responses token-by-token, leading to hallucinations (incorrect answers) and latency.
+        Networking tasks require fast, structured decisions, e.g., selecting a bitrate from a predefined set.
+
+    3.3 High Adaptation Costs
+        Fine-tuning LLMs using standard RL techniques requires excessive computational resources due to constant environment interaction.
+        Full parameter fine-tuning consumes excessive GPU memory and training time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. NetLLM Design
+    NetLLM comprises three core components:
+
+    4.1 Multimodal Encoder
+        Converts non-textual networking inputs (graphs, time-series, images) into token-like embeddings that LLMs can process.
+        Uses existing feature encoders (CNNs for time-series, GNNs for graphs, ViTs for images).
+        Outperforms text-based prompt learning.
+
+    4.2 Networking Head         n(FFNN + Softmax)
+        Replaces the default language modeling (LM) head with a task-specific output layer.
+        Ensures that outputs fall within valid ranges (e.g., bitrate selection in ABR).
+        Enables single-step answer generation, reducing latency.
+
+    4.3 Data-Driven Low-Rank Networking Adaptation (DD-LRNA)
+        Uses data-driven training instead of environment interaction for RL-based tasks.
+        Low-rank fine-tuning: Instead of modifying all LLM parameters, introduces small trainable low-rank matrices (~0.31% of total parameters).
+        Reduces GPU memory usage by 60.9% and training time by 15.1%.
+
+    4.4 Implementation
+        Implemented in Python and Bash.
+        Provides APIs for SL/RL model adaptation, testing, and dataset collection.
+        Integrated with existing Viewport Prediction, ABR, and Job Scheduling frameworks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Evaluation
+    5.1 Setup
+        Uses Llama2-7B as the base model.
+        Compared against state-of-the-art learning-based and rule-based algorithms.
+        Evaluated using simulations and real-world tests.
+        Metrics:
+            Mean Absolute Error (MAE) for viewport prediction (lower is better).
+            Quality of Experience (QoE) score for ABR (higher is better).
+            Job Completion Time (JCT) for CJS (lower is better).
+
+    5.2 General Evaluation
+        NetLLM-adapted Llama2 outperforms all baselines:
+            10.1-36.6% improvement in viewport prediction accuracy.
+            14.5-36.6% QoE boost in ABR.
+            6.8-41.3% faster job completion in CJS.
+
+    5.3 Generalization Performance
+        Evaluated in unseen environments (network fluctuations, new datasets).
+        NetLLM consistently outperforms traditional learning-based models, which sometimes fail on unfamiliar data.
+
+    5.4 Real-World Tests
+        Tested on a real-world ABR client-server system under different network conditions.
+        NetLLM achieves the best QoE in all cases.
+
+    5.5 Deep Dive: Why LLMs Work for Networking?
+        Pre-trained knowledge provides emergent abilities (pattern mining, planning), crucial for networking tasks.
+        Fine-tuned domain knowledge is still essential for best performance.
+        Low-rank adaptation significantly reduces costs without sacrificing accuracy.
+
+6. Conclusion
+    NetLLM is the first framework to systematically adapt LLMs for networking.
+    Addresses challenges in modality gap, inefficient response generation, and high adaptation costs.
+    Demonstrates superior performance across multiple networking tasks.
+    Future work includes applying NetLLM to other domains like telecom, finance, and cybersecurity.
