@@ -120,12 +120,12 @@ def main(url, output_pref, shaping):
     output_log = os.path.join(analytics_dir, f"{output_pref_timestamp}.log")
     
     # Remove existing files
-    logging.info("Removing existing files...")
-    clear_files = [output_pcap, output_har, output_csv, output_log]
-    for file in clear_files:
-        if os.path.exists(file):
-            os.remove(file)
-    log_and_print("Existing files removed.")
+    # logging.info("Removing existing files...")
+    # clear_files = [output_pcap, output_har, output_csv, output_log]
+    # for file in clear_files:
+    #     if os.path.exists(file):
+    #         os.remove(file)
+    # log_and_print("Existing files removed.")
 
 
     log_and_print("Initializing HAR capture...")
@@ -151,6 +151,7 @@ def main(url, output_pref, shaping):
         while video_element.get_attribute("paused") == "true":
             time.sleep(0.1)
         startup_time = round(time.time() - startup_time, 2)
+        
         print(f"[info] Video started playing. Startup latency: {startup_time} seconds.")
         logging.info(f"Video started playing. Startup latency: {startup_time} seconds.")
 
