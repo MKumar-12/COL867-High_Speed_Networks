@@ -7,3 +7,4 @@ jupyterlab
 python-whois
 matplotlib
 scikit-learn
+tqdm

@@ -33,9 +33,9 @@ The framework is evaluated on three use cases—
 
     1.3 Design and Contributions
         Introduces NetLLM, which efficiently adapts LLMs for networking using:
-            Multimodal encoder to handle various networking data formats.
-            Networking head for structured output generation instead of token-by-token prediction.
-            Data-driven low-rank adaptation (DD-LRNA) to reduce fine-tuning costs.
+            Multimodal encoder          to handle various networking data formats.
+            Networking head             for structured output generation instead of token-by-token prediction.
+            Data-driven low-rank adaptation (DD-LRNA)           to reduce fine-tuning costs.
 
         Evaluated across three tasks:
             Viewport prediction (VR streaming)
